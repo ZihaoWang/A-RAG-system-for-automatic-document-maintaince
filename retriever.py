@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import re
-import uuid
+from operator import itemgetter
 from collections.abc import Iterable
 from argparse import Namespace
 from langchain.docstore.document import Document
@@ -37,39 +37,72 @@ class DataPreProcessor(object):
 
 
         if args.retriever == "multi_vector_retriever":
-            checking_keys = ["multi_vec_chunk_size",
-                    "chunk_overlap_size",
-                    "emb_model_name"]
-            self.retriever = load_model(checking_keys)
-            if self.retriever is None:
-                self.__init_multivec_retriever(checking_keys)
+            self.__init_multivec_retriever()
         else:
-            checking_keys = ["parent_chunk_size",
-                    "child_chunk_size",
-                    "chunk_overlap_size",
-                    "emb_model_name"]
-            saved_emb = load_model(checking_keys)
-            if saved_emb is None:
-                self.__init_parent_document_retriever(checking_keys)
-            else:
-                store = InMemoryByteStore()
-                store.mset(saved_emb)
-                self.retriever = ParentDocumentRetriever(vectorstore=vectorstore,
-                        docstore=parent_storage,
-                        parent_splitter=parent_splitter,
-                        child_splitter=child_splitter)
+            self.__init_parent_document_retriever()
+
+    def __get_saving_root(self, checking_keys: Iterable[str]):
+        os.makedirs(args.retriever_saving_root, exist_ok = True)
+        all_saving_dirs = os.listdir(args.retriever_saving_root)
+        saving_root = None
+        new_root = None
+
+        for d in all_saving_dirs:
+            saving_root = args.retriever_saving_root + d + "/"
+            with open(saving_root + "config.pickle", "rb") as f_src:
+                saved_config = pickle.load(f_src)
+            if self.__same_config(saved_config, checking_keys):
+                logging.info("Using the existing vectorstore with the config:")
+                for k in checking_keys:
+                    logging.info(f"\t\t{k}: {saved_config[k]}")
+                new_root = False
+                break
+        else:
+            saving_root = args.retriever_saving_root + str(len(all_saving_dirs)) + "/"
+            os.makedirs(saving_root, exist_ok = True)
+
+            logging.info(f"Creating a vectorstore at {saving_root} with a new config:")
+            saved_config = {}
+            for k in checking_keys:
+                v = getattr(self.args, k)
+                logging.info(f"\t\t{k}: {v}")
+                saved_config[k] = v
+        
+            new_root = True
+            with open(saving_root + "config.pickle", "wb") as f_dst:
+                pickle.dump(saved_config, f_dst, pickle.HIGHEST_PROTOCOL)
+    
+        return saving_root, new_root
+
+    def __same_config(self, saved_config, checking_keys):
+        if len(checking_keys) != len(saved_config):
+            #saved_keys = list(saved_config.keys())
+            #logging.warn(f"The running config is different as the saved config:")
+            #logging.warn(f"Keys in the running config: {checking_keys}")
+            #logging.warn(f"Keys in the saved config: {saved_keys}")
+            return False 
+    
+        for k in checking_keys:
+            running_arg = getattr(self.args, k)
+            saved_arg = saved_config[k]
+            if saved_arg != running_arg:
+                #logging.warn(f"Arg in the running config is different as the arg in the saved config:")
+                #logging.warn(f"In the running config, {k}: {running_arg}")
+                #logging.warn(f"In the saved config, {k}: {saved_arg}")
+                return False 
+    
+        return True
 
     def get_retriever(self) -> BaseRetriever:
         return self.retriever
 
-    def __init_parent_document_retriever(self, checking_keys):
+    def __init_parent_document_retriever(self):
         logging.info("Initialize parent document retriever.")
 
         separators = RecursiveCharacterTextSplitter.get_separators_for_language("python")
         separators += [".", "?", "!"]
         if self.args.parent_chunk_size == -1:
-            parent_splitter = RecursiveCharacterTextSplitter(separators=separators,
-                    keep_separator = True)
+            parent_splitter = None
         else:
             parent_splitter = RecursiveCharacterTextSplitter(separators=separators,
                     keep_separator = True,
@@ -79,26 +112,42 @@ class DataPreProcessor(object):
                 keep_separator = True,
                 chunk_size=self.args.child_chunk_size,
                 chunk_overlap=self.args.chunk_overlap_size)
-        vectorstore = Chroma(embedding_function=self.emb_model, persist_directory = self.args.child_saving_root)
 
-        parent_storage = create_kv_docstore(LocalFileStore(self.args.parent_saving_root))
+        checking_keys = ["parent_chunk_size",
+                "child_chunk_size",
+                "chunk_overlap_size",
+                "emb_model_name"]
+        saving_root, new_root = self.__get_saving_root(checking_keys)
+        vectorstore = Chroma(embedding_function=self.emb_model, persist_directory=saving_root + "vectorstore/")
+        docstore = create_kv_docstore(LocalFileStore(saving_root + "docstore/"))
+
         self.retriever = ParentDocumentRetriever(vectorstore=vectorstore,
-                docstore=parent_storage,
+                docstore=docstore,
                 parent_splitter=parent_splitter,
                 child_splitter=child_splitter)
 
-        print(4)
-        print(len(self._raw_docs))
-        self.retriever.add_documents(self._raw_docs)
+        if new_root:
+            logging.info("Loading documents into the new vectorstore.")
+            ids = [doc.metadata["doc_id"] for doc in self._raw_docs]
+            self.retriever.add_documents(self._raw_docs, ids)
 
-        print(5)
-        save_model(self.retriever, checking_keys)
+        print(len(list(docstore.yield_keys())))
+        data = vectorstore.get(where={"doc_id": "0"}, include=["embeddings", "metadatas", "documents"])
+        print(len(data["ids"]), len(data["documents"]), len(data["embeddings"]), len(data["metadatas"]), len(data["embeddings"][0]))
+        print(data["metadatas"][1])
+        print(data["documents"][1])
+        print(data["embeddings"][1][:5])
+        exit()
+        #self.vectorstore.add_documents(self._raw_docs)
 
-    def __init_multivec_retriever(self, checking_keys):
+    def __init_multivec_retriever(self):
         separators = RecursiveCharacterTextSplitter.get_separators_for_language("python")
         separators += [".", "?", "!"]
 
-        save_model(self.retriever, checking_keys)
+        checking_keys = ["multi_vec_chunk_size",
+                "chunk_overlap_size",
+                "emb_model_name"]
+        saving_root = self.__get_saving_root(checking_keys)
 
     def __load_data(self, data_path: str):
         self._raw_docs = []
@@ -106,10 +155,8 @@ class DataPreProcessor(object):
             for i, line in enumerate(f_src):
                 content = json.loads(line)["content"]
                 content = self.__clean_content(content)
-                content = Document(page_content=content)
+                content = Document(page_content=content, metadata={"doc_id": str(i)})
                 self._raw_docs.append(content)
-                if i > 10:
-                    break
 
 
     def __clean_content(self, content):

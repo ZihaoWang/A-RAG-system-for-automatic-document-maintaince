@@ -30,12 +30,7 @@ def get_args():
     else:
         args.emb_provider = "openai"
 
-    #args.retriever_saving_path = args.tmp_root + f"{args.retriever}/{args.emb_provider}/retriever_cache.pickle"
-    if args.retriever == "parent_document_retriever":
-        args.parent_saving_root = args.tmp_root + f"{args.retriever}/{args.emb_provider}/parent_emb/"
-        args.child_saving_root = args.tmp_root + f"{args.retriever}/{args.emb_provider}/child_emb/"
-    else:
-        args.saving_root = args.tmp_root + f"multi_vector_retriever/{args.emb_provider}/emb/"
+    args.retriever_saving_root = args.tmp_root + f"{args.retriever}/{args.emb_provider}/{args.emb_model_name}/"
 
     return args
 

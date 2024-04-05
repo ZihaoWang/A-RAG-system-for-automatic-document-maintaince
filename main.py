@@ -18,14 +18,11 @@ def run(data_path):
 
 
 if __name__ == "__main__":
-    os.environ['LANGCHAIN_TRACING_V2'] = 'true'
-    os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
-    with open("secrets.txt", "r") as f_src:
-        for line in f_src:
-            key, secret = line.strip().split("=")
-            os.environ[key] = secret
+    args = init_env_args_logging()
+    data_loader = DataLoader(args)
+    doc_emb = DocEncoder(data_loader, args)
 
-    data_path = "./data/scraped_data.jsonl"
-    run(data_path)
-
+    retriever = doc_emb.get_retriever()
+    retrieved_docs = retriever.get_relevant_documents("blockchain data")
+    print(retrieved_docs)
 

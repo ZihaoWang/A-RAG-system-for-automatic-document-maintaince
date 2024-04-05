@@ -77,6 +77,9 @@ class DocRetriever(object):
 
         self.retriever = ParentDocumentRetriever(vectorstore=self.vectorstore,
                 docstore=self.docstore,
+                search_type=self.args.search_type,
+                search_kwargs={"fetch_k": self.args.search_fetch_k,
+                    "k": self.args.search_return_k}
                 parent_splitter=parent_splitter,
                 child_splitter=child_splitter)
 

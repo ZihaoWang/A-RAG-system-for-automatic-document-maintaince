@@ -3,8 +3,10 @@ import os
 import numpy as np
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-import tiktoken
 import utils
+
+from data_loader import DataLoader
+from doc_retriever import DocRetriever
 
 def get_embeddings():
     embd = OpenAIEmbeddings()

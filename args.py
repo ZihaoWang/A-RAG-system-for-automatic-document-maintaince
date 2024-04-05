@@ -17,6 +17,9 @@ def get_args():
 
 
     parser.add_argument("--emb_model_name", type = str, default = "all-MiniLM-L6-v2", choices = ["all-MiniLM-L6-v2", "gpt-3.5-turbo-16k"], help = "Use HuggingFace embedding model: all-MiniLM-L6-v2, or OpenAI embedding model: gpt-3.5-turbo-16k.")
+    parser.add_argument("--search_type", default = "mmr", type = str, choices = ["mmr", "similarity"], help = "The type of search that the Retriever should perform.")
+    parser.add_argument("--search_fetch_k", default = "20", type = int, choices = [10, 20, 40], help = "Number of documents passed to the search function.")
+    parser.add_argument("--search_return_k", default = "5", type = int, choices = [1, 5, 10], help = "Number of documents to return after searching.")
 
     parser.add_argument("--idx_gpu", default = -1, type = int, help = "which cuda device to use (-1 for cpu training)")
 

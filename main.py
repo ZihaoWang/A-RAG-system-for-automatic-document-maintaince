@@ -20,9 +20,9 @@ def run(data_path):
 if __name__ == "__main__":
     args = init_env_args_logging()
     data_loader = DataLoader(args)
-    doc_emb = DocEncoder(data_loader, args)
+    doc_retriever = DocRetriever(data_loader, args)
 
-    retriever = doc_emb.get_retriever()
+    retriever = doc_retriever.get_retriever()
     retrieved_docs = retriever.get_relevant_documents("blockchain data")
     print(retrieved_docs)
 

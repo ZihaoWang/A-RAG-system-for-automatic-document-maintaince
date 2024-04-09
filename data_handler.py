@@ -2,12 +2,13 @@ import os
 import logging
 import json
 import re
+from typing import Dict
 from collections.abc import Iterable
 from argparse import Namespace
 from langchain.docstore.document import Document
 from args import get_args
 
-class DataLoader(object):
+class DataHandler(object):
     def __init__(self, args: Namespace):
         self.args = args
 
@@ -16,13 +17,22 @@ class DataLoader(object):
     def get_data(self):
         return self._raw_docs
 
+    def save_updated_data(self, data_path: str, docs: Iterable[Document]):
+        with open(data_path, "w") as f_dst:
+            for i, doc in enumerate(docs):
+                assert i == int(doc.metadata["doc_id"])
+                line = {"content": doc.page_content, "url": doc.metadata["url"]}
+                json.dump(line, f_dst)
+                f_dst.write("\n")
+
     def __load_data(self, data_path: str):
         self._raw_docs = []
         with open(data_path, "r") as f_src:
             for i, line in enumerate(f_src):
-                content = json.loads(line)["content"]
+                line = json.loads(line)
+                content, url = line["content"], line["url"]
                 content = self.__clean_content(content)
-                content = Document(page_content=content, metadata={"doc_id": str(i)})
+                content = Document(page_content=content, metadata={"doc_id": str(i), "url": url})
                 self._raw_docs.append(content)
 
 

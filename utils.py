@@ -138,7 +138,7 @@ def same_config(saved_config: dict[str, Any], checking_keys: dict[str, Any], arg
         saved_arg = saved_config[k]
         if saved_arg != running_arg:
             logging.info(f"Arg in the running config is different as the arg in the saved config:")
-            logging.ingo(f"In the running config, {k}: {running_arg}")
+            logging.info(f"In the running config, {k}: {running_arg}")
             logging.info(f"In the saved config, {k}: {saved_arg}")
             return False 
 

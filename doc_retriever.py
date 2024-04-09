@@ -22,7 +22,7 @@ class DocRetriever(object):
         self.args = args
         self._docs = data_handler.get_data()
 
-        if args.emb_provider == "hf":
+        if args.emb_provider == "hugging_face":
             model_kwargs = {"device": args.device}
             self.emb_model = HuggingFaceEmbeddings(model_name=args.emb_model_name,
                     model_kwargs = model_kwargs)
@@ -85,11 +85,13 @@ class DocRetriever(object):
                 persist_directory=saving_root + "vectorstore/")
         self.docstore = create_kv_docstore(LocalFileStore(saving_root + "docstore/"))
 
+        search_kwargs = {"k": self.args.search_return_k}
+        if self.args.search_type == "mmr":
+            search_kwargs["fetch_k"] = self.args.search_fetch_k
         self.retriever = ParentDocumentRetriever(vectorstore=self.vectorstore,
                 docstore=self.docstore,
                 search_type=self.args.search_type,
-                search_kwargs={"fetch_k": self.args.search_fetch_k,
-                    "k": self.args.search_return_k},
+                search_kwargs=search_kwargs,
                 parent_splitter=parent_splitter,
                 child_splitter=child_splitter)
 

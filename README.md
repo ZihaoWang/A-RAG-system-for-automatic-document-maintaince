@@ -11,9 +11,9 @@ With this framework, a person can simply enter the query: *We removed the abilit
 # Installation and Running
 1. Build the Docker image:
 
-    * docker build -t rag img --rm .
+    * docker build -t rag_img --rm .
 
-    * docker run -it --name rag app --rm rag img
+    * docker run -it --name rag_app --rm rag_img
 
 2. Change the OpenAI and LangChain keys in the secrets.txt
 
@@ -21,7 +21,9 @@ With this framework, a person can simply enter the query: *We removed the abilit
 
 4. Run the framework, such as:
 
-* python main.py --emb model name all-MiniLM-L6-v2 python main.py --emb model name text-embedding-3-small --retriever parent document retriever --search fetch k 40
+    * python main.py --emb_model_name all-MiniLM-L6-v2
+
+    * python main.py --emb_model_name text-embedding-3-small --retriever parent_document_retriever --search_fetch_k 40
 
 5. The updated documents will be stored under the *result/*, and the log file *rag.log* is under the *log/*.
 

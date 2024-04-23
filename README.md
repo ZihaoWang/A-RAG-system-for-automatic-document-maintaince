@@ -3,9 +3,13 @@ A simple RAG framework using LangChain.
 
 # The Task
 
-Information changes quickly, and it's hard to keep knowledge current. Some team members are responsible for maintaining accurate documentation, but it's tough for them to identify all the places needing updates, especially with each new product change. So, we're creating a RAG solution that can automatically update documentation based on natural language queries.
+Information changes quickly, and it's hard to keep knowledge current. Some team members are responsible for maintaining accurate documentation, but it's tough for them to identify all the places needing updates, especially with each new product change. So, we're creating **a RAG solution that can automatically update documentation based on natural language queries.**
 
-Imagine there's a new document update. Now, archiving isn't possible anymore; instead, queries can only be deleted. With our solution, a team member can simply enter the instruction *We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant knowledge.* Then, the RAG Solution will automatically update all the relevant information in the documentation.
+Imagine there's a new document update:
+
+* Now, archiving isn't possible anymore; instead, queries can only be deleted.
+
+With this framework, a person can simply enter the query: *We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant knowledge.* Then, the framework will automatically update all the relevant information in the documentation.
 
 # Installation and Running
 1. Build the Docker image:
@@ -16,15 +20,15 @@ Imagine there's a new document update. Now, archiving isn't possible anymore; in
 
 2. Change the OpenAI and LangChain keys in the secrets.txt
 
-3. Check the existing queries in the queries.txt and see if you want to add more. Each line is a query.
+3. Check the existing queries in the *queries.txt* and see if you want to add more. Each line is a query.
 
 4. Run the framework, such as:
 
 * python main.py --emb model name all-MiniLM-L6-v2 python main.py --emb model name text-embedding-3-small --retriever parent document retriever --search fetch k 40
 
-5. The updated documents will be stored under the result/, and the log file rag.log is under the log/.
+5. The updated documents will be stored under the *result/*, and the log file *rag.log* is under the *log/*.
 
-6. For other parameters in the configuration, check the config.py.
+6. For other parameters in the configuration, check the *config.py*.
 
 # Important Arguments In The Configuration
 

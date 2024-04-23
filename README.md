@@ -35,15 +35,15 @@ I list some of the arguments that are important to the final performance. More d
 
 * --retriever: Can be Threshold Retriever or ParentDocument Retriever. The Threshold Retriever returns all documents whose similarities with the query are above a certain threshold, and the ParentDocument Retriever always returns Top-k similar documents.
 
-* --search type: For ParentDocument Retriever, it can retrieve documents with ”mmr” using reranking or ”similarity” computing only the cosine similarity. For Threshold Retriever, it can only be ”similarity score threshold” that retrieves documents above a similarity threshold set in the argument --score threshold.
+* --search_type: For ParentDocument Retriever, it can retrieve documents with ”mmr” using reranking or ”similarity” computing only the cosine similarity. For Threshold Retriever, it can only be ”similarity score threshold” that retrieves documents above a similarity threshold set in the argument --scorer_threshold.
 
-* --chunk size: The size of chunks within each document. A smaller chunk size enables more subtle retrieval.
+* --chunk_size: The size of chunks within each document. A smaller chunk size enables more subtle retrieval.
 
-* --search fetch k: Number of documents sent to the re-ranking process of the MMR. A larger number increases the diversity of retrieval results.
+* --search_fetch_k: Number of documents sent to the re-ranking process of the MMR. A larger number increases the diversity of retrieval results.
 
-* --emb model name: Embedding models for documents. Can be OpenAI (”text-embedding3-small”, ”text-embedding-3-large”) or HuggingFace (”all-MiniLM-L6-v2”) embedding models.
+* --emb_model_name: Embedding models for documents. Can be OpenAI (”text-embedding3-small”, ”text-embedding-3-large”) or HuggingFace (”all-MiniLM-L6-v2”) embedding models.
 
-* --llm model name: OpenAI chat model for text generation, can be gpt-3.5-turbo or gpt-4.
+* --llm_model_name: OpenAI chat model for text generation, can be gpt-3.5-turbo or gpt-4.
 
 # Implementation Details
 
@@ -79,7 +79,7 @@ For experiments, I use three different queries:
 
 3. *We do not support TrinoSQL anymore. Update all relevant documents.*
 
-I compared different configurations of the framework listed in the previous section. All the logs of different configurations can be viewed under the directory log/. The following configuration is considered as the baseline: retriever = threshold retriever, search type = similarity score threshold, chunk size = 400, search fetch k = 20, emb model name = text-embedding-3-small, llm model name = gpt-4.
+I compared different configurations of the framework listed in the previous section. All the logs of different configurations can be viewed under the directory log/. The following configuration is considered as the baseline: retriever = threshold_retriever, search_type = similarity_score_threshold, chunk_size = 400, search_fetch_k = 20, emb_model_name = text-embedding-3-small, llm_model_name = gpt-4.
 
 After manually analyzing the framework’s performance under different configurations, here are several interesting results:
 
@@ -93,7 +93,7 @@ After manually analyzing the framework’s performance under different configura
 
 	    – After: POST/api/v1/query/query id/delete
 
-	    – Before: def archive query(self, query id : int)− > bool : more codes.
+	    – Before: def archive query(self, query id : int) −> bool : more codes.
 
 	    – After: Method to archive queries has been removed.
 

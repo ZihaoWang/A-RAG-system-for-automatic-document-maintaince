@@ -1,13 +1,10 @@
-# RAG-Query-Processor
-A simple RAG framework using LangChain.
+# A RAG Framework for Automatic Document Updates
 
-# The Task
-
-Information changes quickly, and it's hard to keep knowledge current. Some team members are responsible for maintaining accurate documentation, but it's tough for them to identify all the places needing updates, especially with each new product change. So, we're creating **a RAG solution that can automatically update documentation based on natural language queries.**
+Information changes quickly, and it's hard to keep them up-to-date. Suppose some people are responsible for maintaining documentation, but it's tough for them to identify all the places needing updates. So, we're creating **a RAG solution that can automatically update documentation based on natural language queries.**
 
 Imagine there's a new document update:
 
-* Now, archiving isn't possible anymore; instead, queries can only be deleted.
+* Now, archiving queries isn't possible anymore; instead, queries can only be deleted.
 
 With this framework, a person can simply enter the query: *We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant knowledge.* Then, the framework will automatically update all the relevant information in the documentation.
 
@@ -85,16 +82,18 @@ I compared different configurations of the framework listed in the previous sect
 After manually analyzing the framework’s performance under different configurations, here are several interesting results:
 
 * For the Query 1, most models successfully update the ”archive” into the ”delete.” Moreover, there are two highlights:
+
     1. The framework (such as the baseline configuration) can also recognize the word ”unarchive” and update the information correctly.
+
     2. Some codes can also be updated. For example:
 
-	– Before: POST/api/v1/query/query id/archive
+	    – Before: POST/api/v1/query/query id/archive
 
-	– After: POST/api/v1/query/query id/delete
+	    – After: POST/api/v1/query/query id/delete
 
-	– Before: defarchive query(self, query id : int)− > bool : more codes.
+	    – Before: def archive query(self, query id : int)− > bool : more codes.
 
-	– After: Method to archive queries has been removed.
+	    – After: Method to archive queries has been removed.
 
 * The Query 2 is difficult for document retrieval, as the keyword ”250,000” is a number that is difficult for embedding models to recognize. However, as I decreased the chunk size to 200, the framework can retrieve the correct document with this information.
 

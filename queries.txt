@@ -1,3 +1,0 @@
-We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant documents.
-We have increased the default limit of 250,000 datapoints to 400,000. Update all relevant documents.
-We do not support TrinoSQL anymore. Update all relevant documents.

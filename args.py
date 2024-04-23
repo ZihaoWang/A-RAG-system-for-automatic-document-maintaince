@@ -7,7 +7,7 @@ def get_args():
     parser.add_argument("--data_root", default = "./data/", type = str, help = "Directory of data")
     parser.add_argument("--result_root", default = "./result/", type = str, help = "Directory of results")
     parser.add_argument("--tmp_root", default = "./tmp/", type = str, help = "Directory of temporary files.")
-    parser.add_argument("--query_path", default = "./queries.txt", type = str, help = "Patg of the query file, each line is a query.")
+    parser.add_argument("--query_path", default = "./data/queries.txt", type = str, help = "Patg of the query file, each line is a query.")
     parser.add_argument("--llm_response_separator", default = "####--separator--####", type = str, help = "Separator between differences and updated text..")
 
     parser.add_argument("--retriever", type = str, default = "threshold_retriever", choices = ["threshold_retriever", "parent_document_retriever", "multi_vector_retriever"], help = "Use the Threshold, ParentDocument or Multi-vector LangChain Retriever.")
@@ -30,7 +30,7 @@ def get_args():
 
     args = parser.parse_args()
 
-    args.data_path = args.data_root + "scraped_data.jsonl"
+    args.data_path = args.data_root + "documents.json"
     args.device = "cpu" if args.idx_gpu == -1 else f"cuda:{args.idx_gpu}"
 
     if args.retriever == "threshold_retriever":

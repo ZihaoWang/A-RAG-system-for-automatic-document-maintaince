@@ -53,14 +53,14 @@ def batch_openai_request(fn: Callable, fn_input: Iterable[U], length: int, has_r
     return results
 
 def init_env_args_logging() -> Namespace:
+    args = get_args()
+
     os.environ['LANGCHAIN_TRACING_V2'] = 'true'
     os.environ['LANGCHAIN_ENDPOINT'] = 'https://api.smith.langchain.com'
-    with open("secrets.txt", "r") as f_src:
+    with open(args.secret_path, "r") as f_src:
         for line in f_src:
             key, secret = line.strip().split("=")
             os.environ[key] = secret
-
-    args = get_args()
     
     log_path = os.path.join(args.log_root, "rag.log")
     # file logger

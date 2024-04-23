@@ -13,7 +13,7 @@ def get_args():
     parser.add_argument("--retriever", type = str, default = "threshold_retriever", choices = ["threshold_retriever", "parent_document_retriever", "multi_vector_retriever"], help = "Use the Threshold, ParentDocument or Multi-vector LangChain Retriever.")
     parser.add_argument("--parent_chunk_size", type = int, default = -1, choices = [-1, 1000], help = "The chunk size of each document, -1 means no chunk, for ParentDocument LangChain Retriever.")
     parser.add_argument("--child_chunk_size", type = int, default = 400, choices = [100, 200, 400], help = "The size of child chunks within each document, for ParentDocument LangChain Retriever.")
-    parser.add_argument("--chunk_size", type = int, default = 400, choices = [100, 200, 400],ehelp = "The size of chunks within each document, for Threshold and Multi-vector LangChain Retriever.")
+    parser.add_argument("--chunk_size", type = int, default = 400, choices = [100, 200, 400], help = "The size of chunks within each document, for Threshold and Multi-vector LangChain Retriever.")
     parser.add_argument("--chunk_overlap_size", type = int, default = 50, choices = [20, 50, 100], help = "Overlapping chars between chunks.")
     #parser.add_argument("--", type = str, choices = [], help = "")
 

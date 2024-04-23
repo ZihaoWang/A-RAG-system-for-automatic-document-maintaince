@@ -5,14 +5,14 @@ A simple RAG framework using LangChain.
 
 Information changes quickly, and it's hard to keep knowledge current. Some team members are responsible for maintaining accurate documentation, but it's tough for them to identify all the places needing updates, especially with each new product change. So, we're creating a RAG solution that can automatically update documentation based on natural language queries.
 
-Imagine there's a new document update. Now, archiving isn't possible anymore; instead, queries can only be deleted. With our solution, a team member can simply enter the instruction **We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant knowledge.** Then, the RAG Solution will automatically update all the relevant information in the documentation.
+Imagine there's a new document update. Now, archiving isn't possible anymore; instead, queries can only be deleted. With our solution, a team member can simply enter the instruction *We removed the ability to archive queries, and instead added the ability to completely delete them. Update all relevant knowledge.* Then, the RAG Solution will automatically update all the relevant information in the documentation.
 
 # Installation and Running
 1. Build the Docker image:
 
-* docker build -t rag img --rm .
+    * docker build -t rag img --rm .
 
-* docker run -it --name rag app --rm rag img
+    * docker run -it --name rag app --rm rag img
 
 2. Change the OpenAI and LangChain keys in the secrets.txt
 
@@ -70,11 +70,11 @@ Based on this initial framework, the following optimizations have been performed
 
 For experiments, I use three different queries:
 
-1. **We removed the ability to archive queries and instead added the ability to completely delete them. Update all relevant documents.**
+1. *We removed the ability to archive queries and instead added the ability to completely delete them. Update all relevant documents.*
 
-2. **We have increased the default limit of 250,000 datapoints to 400,000. Update all relevant documents.**
+2. *We have increased the default limit of 250,000 datapoints to 400,000. Update all relevant documents.*
 
-3. **We do not support TrinoSQL anymore. Update all relevant documents.**
+3. *We do not support TrinoSQL anymore. Update all relevant documents.*
 
 I compared different configurations of the framework listed in the previous section. All the logs of different configurations can be viewed under the directory log/. The following configuration is considered as the baseline: retriever = threshold retriever, search type = similarity score threshold, chunk size = 400, search fetch k = 20, emb model name = text-embedding-3-small, llm model name = gpt-4.
 
@@ -85,9 +85,11 @@ After manually analyzing the framework’s performance under different configura
     2. Some codes can also be updated. For example:
 
 	– Before: POST/api/v1/query/query id/archive
+
 	– After: POST/api/v1/query/query id/delete
 
 	– Before: defarchive query(self, query id : int)− > bool : more codes.
+
 	– After: Method to archive queries has been removed.
 
 * The Query 2 is difficult for document retrieval, as the keyword ”250,000” is a number that is difficult for embedding models to recognize. However, as I decreased the chunk size to 200, the framework can retrieve the correct document with this information.

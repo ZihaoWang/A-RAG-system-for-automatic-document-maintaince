@@ -1,4 +1,4 @@
-# A RAG Framework for Automatically Updating Documents
+# A RAG Demo for Automatic Document Maintaince
 
 Information changes quickly, and it's hard to keep them up-to-date. Suppose some people are responsible for maintaining documentation, but it's tough for them to identify all the places needing updates. So, we're creating **a RAG solution that can automatically update documentation based on natural language queries.**
 

@@ -59,7 +59,7 @@ Given the user’s natural language queries and the provided documents, the proj
 
 5. The original documents and their updates are saved into the JSON file.
 
-Based on this initial framework, the following optimizations have been performed:
+Based on this initial framework, the following optimizations have been implemented:
 
 * To save querying to LLMs, the embeddings and corresponding configurations are stored locally. Each time, the framework decides whether to reuse the local embeddings by checking the current configurations with the stored ones. If both configurations are the same, the framework can reuse the local embeddings and does not need to query from LLMs.
 
